@@ -40,6 +40,8 @@ android {
         //PushSDK必须依赖基础组件库，所以需要加入对应依赖
         implementation  'com.umeng.umsdk:common:2.0.0'
         //PushSDK必须依赖utdid库，所以需要加入对应依赖
+        //  Type com.ta.utdid2.b.a.b$a is referenced as an interface from `com.ta.utdid2.b.a.d$a$a`.
+        //  与 alipay 的依赖有冲突，可注销此处
         implementation 'com.umeng.umsdk:utdid:1.1.5.3'
         //PushSDK
         implementation 'com.umeng.umsdk:push:6.0.1'
