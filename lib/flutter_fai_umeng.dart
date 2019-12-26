@@ -23,9 +23,9 @@ class FlutterFaiUmeng {
   }
 
 
-  /// appKey 创建应用的唯一标识
-  /// pushSecret 使用推送时必传的参数
-  /// logEnabled 是否开启友盟推送的日志
+  /// [appKey] 创建应用的唯一标识
+  /// [pushSecret] 使用推送时必传的参数
+  /// [logEnabled] 是否开启友盟推送的日志
   static Future<Map> uMengInit(String appKey,{String pushSecret,bool logEnabled=false})  async{
     Map map = new Map();
     map["method"]="umInit";

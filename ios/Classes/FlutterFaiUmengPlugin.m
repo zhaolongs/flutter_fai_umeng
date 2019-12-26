@@ -37,12 +37,13 @@
             BOOL logEnabled =message[@"logEnabled"];
             
             NSLog(@"%@", [NSString stringWithFormat: @"umeng 初始化消息【 appkey:%@ pushSecret:%@ logEnabled:%d 】",appkey,pushSecret,logEnabled]);
-            
+            //日志
             [UMConfigure setLogEnabled:logEnabled];
             if(logEnabled){
                 //开发者需要显式的调用此函数，日志系统才能工作
                 [UMCommonLogManager setUpUMCommonLogManager];
             }
+            //渠道设置以及友盟的初始化
             [UMConfigure initWithAppkey:appkey channel:@"App Store"];
             //设置为自动采集页面
             [MobClick setAutoPageEnabled:NO];

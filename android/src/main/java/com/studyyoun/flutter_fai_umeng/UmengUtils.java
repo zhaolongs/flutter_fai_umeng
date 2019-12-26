@@ -44,6 +44,8 @@ public class UmengUtils {
 	
 	
 	public static void uMengInit(Context context, String appkey, String pushSecret, boolean logEnabled) {
+		///在本方法中使用了[getChannelName]方法来获取配置在 AndroidManifest.xml中的友盟的渠道名称
+		///如使用 360加固打包启动了多渠道打包配制，getChannelName 方法将会获取到这个渠道名称
 		uMengInit(context, appkey, getChannelName(context), UMConfigure.DEVICE_TYPE_PHONE, pushSecret, logEnabled);
 	}
 	
@@ -80,13 +82,9 @@ public class UmengUtils {
 		//MobclickAgent.openActivityDurationTrack(true);
 		//错误收集（默认已经配置，而且已经打开）
 		//MobclickAgent.setCatchUncaughtExceptions(true);
-		String[] lTestDeviceInfo = getTestDeviceInfo(context);
-		for (String lS : lTestDeviceInfo) {
-			System.out.println(lS);
-		}
 		
 		if (channel == null || channel.equals("")) {
-			channel = "zhilun";
+			channel = "test";
 		}
 		if (appkey == null || appkey.equals("")) {
 			throw new NullPointerException("appkey is null");
@@ -119,7 +117,6 @@ public class UmengUtils {
 //		mPushAgent.setNotificationPlaySound(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
 		// 通知声音由服务端控制
 //		mPushAgent.setNotificationPlaySound(MsgConstant.NOTIFICATION_PLAY_SERVER);
-
 //		mPushAgent.setNotificationPlayLights(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
 //		mPushAgent.setNotificationPlayVibrate(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
 		
@@ -128,6 +125,9 @@ public class UmengUtils {
 		
 	}
 	
+	/**
+	 * 注册友盟推送
+	 */
 	private static void registerPush() {
 		//注册推送服务，每次调用register方法都会回调该接口
 		sMPushAgent.register(new IUmengRegisterCallback() {
@@ -183,14 +183,14 @@ public class UmengUtils {
 	
 	public static void uMengPageStart(String pageName) {
 		if (pageName == null || pageName.equals("")) {
-			pageName = "zhilun";
+			pageName = "test";
 		}
 		MobclickAgent.onPageStart(pageName); //统计页面("MainScreen"为页面名称，可自定义)
 	}
 	
 	public static void uMengPageEnd(String pageName) {
 		if (pageName == null || pageName.equals("")) {
-			pageName = "zhilun";
+			pageName = "test";
 		}
 		MobclickAgent.onPageEnd(pageName);
 	}
@@ -198,7 +198,7 @@ public class UmengUtils {
 	public static void uMengEventObject(Context context, String eventName) {
 		Map<String, Object> music = new HashMap<String, Object>();
 		if (eventName == null || eventName.equals("")) {
-			eventName = "zhilun_click";
+			eventName = "test_click";
 		}
 		MobclickAgent.onEvent(context, eventName);
 	}
