@@ -196,11 +196,20 @@ public class UmengUtils {
 	}
 	
 	public static void uMengEventObject(Context context, String eventName) {
+		uMengEventObject(context,eventName,null);
+	}
+	public static void uMengEventObject(Context context, String eventName, String eventId) {
 		Map<String, Object> music = new HashMap<String, Object>();
 		if (eventName == null || eventName.equals("")) {
 			eventName = "test_click";
 		}
-		MobclickAgent.onEvent(context, eventName);
+		if(eventId==null||"".equals(eventId)){
+			MobclickAgent.onEvent(context, eventName);
+		}else {
+			music.put("eventName", eventName);//自定义参数：音乐类型，值：流行
+			MobclickAgent.onEventObject(context, eventId, music);
+		}
+	
 	}
 	public static void uMengError(Context context, String errorMessage) {
 		Map<String, Object> music = new HashMap<String, Object>();
