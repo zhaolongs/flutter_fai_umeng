@@ -95,9 +95,14 @@ public class MessageChannelItem {
 			}else if (lMethod.equals("eventClick")) {
 				
 				String eventTitle = (String) arguments.get("eventTitle");
+				String eventId =null;
+				if (arguments.get("eventTitle") != null) {
+					 eventId = (String) arguments.get("eventId");
+				}
+				
 				Log.d(LOGTAG,"umeng eventTitle【 "+"eventTitle:"+eventTitle+"】");
 				//初始化
-				UmengUtils.uMengEventObject(context,eventTitle);
+				UmengUtils.uMengEventObject(context,eventTitle,eventId);
 			}else if (lMethod.equals("umError")) {
 				
 				String errorMessage = (String) arguments.get("errorMessage");

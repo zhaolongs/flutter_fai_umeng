@@ -64,10 +64,12 @@ class FlutterFaiUmeng {
     return sendMessage(map);
   }
   ///友盟点击事件统计
-  static Future<Map> uMengEventClick(String eventTitle)  async{
+  static Future<Map> uMengEventClick(String eventTitle,{String eventId})  async{
     Map map = new Map();
     map["method"]="eventClick";
     map["eventTitle"] =eventTitle;
+    if(eventId!=null){}
+    map['eventId'] = eventId;
     return sendMessage(map);
   }
 
