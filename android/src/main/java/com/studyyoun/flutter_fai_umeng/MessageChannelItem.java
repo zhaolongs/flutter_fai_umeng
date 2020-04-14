@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import io.flutter.Log;
@@ -71,6 +72,11 @@ public class MessageChannelItem {
 				Log.d(LOGTAG,"umeng 初始化消息【 "+"appkey:"+appkey+" pushSecret:"+pushSecret+" logEnabled:"+logEnabled+"】");
 				//初始化
 				UmengUtils.uMengInit(context, appkey, pushSecret, logEnabled);
+				//获取当前的渠道
+				String lChannelName = UmengUtils.getChannelName(context);
+				Map<String,String> lMap = new HashMap<>();
+				lMap.put("chnnel",lChannelName);
+				reply.reply(lMap);
 			}else if (lMethod.equals("umPageStart")) {
 				
 				String pageTitle = (String) arguments.get("pageTitle");
