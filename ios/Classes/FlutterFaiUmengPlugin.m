@@ -47,6 +47,9 @@
             [UMConfigure initWithAppkey:appkey channel:@"App Store"];
             //设置为自动采集页面
             [MobClick setAutoPageEnabled:NO];
+            if (callback) {
+                callback(@{@"chnnel":@"APPStore"});
+            }
         }else   if ([method isEqualToString:@"umPageStart"]) {
             
             NSString *pageTitle=message[@"pageTitle"];
