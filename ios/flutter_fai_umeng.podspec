@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
+  s.static_framework = true
   s.dependency 'Flutter'
   s.dependency 'UMCCommon', '2.1.1'
   s.dependency 'UMCAnalytics', '6.0.5'
