@@ -15,11 +15,11 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'UMCCommon'
-  s.dependency 'UMCAnalytics'
-  s.dependency 'UMCCommonLog'
+  s.dependency 'UMCCommon', '2.1.1'
+  s.dependency 'UMCAnalytics', '6.0.5'
+  s.dependency 'UMCCommonLog', '1.0.0'
+  s.dependency 'UMCPush'
   #s.dependency 'UMCSecurityPlugins'
- # s.dependency 'UMCPush'
   #s.dependency 'UMCErrorCatch'
 
 
