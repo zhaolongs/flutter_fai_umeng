@@ -99,19 +99,18 @@
         } else if ([method isEqualToString:@"setAlias"]) {
             NSString *alias = message[@"alias"];
             NSString *type = message[@"type"];
-            if (alias.length) {
-                [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
-                    if (!error) {
-                        if (callback) {
-                            callback(@{ @"result": [NSNumber numberWithBool:YES] });
-                        }
-                    } else {
-                        if (callback) {
-                            callback(@{ @"result": [NSNumber numberWithBool:NO] });
-                        }
+
+            [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+                if (!error) {
+                    if (callback) {
+                        callback(@{ @"result": [NSNumber numberWithBool:YES] });
                     }
-                }];
-            }
+                } else {
+                    if (callback) {
+                        callback(@{ @"result": [NSNumber numberWithBool:NO] });
+                    }
+                }
+            }];
         }
     }];
 }
