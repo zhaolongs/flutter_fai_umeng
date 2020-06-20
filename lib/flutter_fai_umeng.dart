@@ -133,4 +133,7 @@ class FlutterFaiUmeng {
     params["debug"] = debug;
     return await messageChannel.send(params);
   }
+
+
+
 }
