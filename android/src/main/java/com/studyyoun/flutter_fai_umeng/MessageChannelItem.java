@@ -60,7 +60,7 @@ public class MessageChannelItem extends FlutterApplication {
 
     private List<String> mPageStartList = new ArrayList<>();
     //获取主线程的Looper对象
-    public Handler mHandler = new Handler(getMainLooper());
+//    public Handler mHandler = new Handler(getMainLooper());
 
     private static String TAG = "| UMPUSH | Flutter | Android | ";
     public PushAgent mPushAgent;
