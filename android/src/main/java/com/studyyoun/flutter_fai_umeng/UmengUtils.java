@@ -100,10 +100,10 @@ public class UmengUtils {
 		MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
 		// 支持在子进程中统计自定义事件
 		UMConfigure.setProcessEvent(true);
-		
-		if (pushSecret != null && !pushSecret.equals("")) {
-			initUpush(context);
-		}
+//
+//		if (pushSecret != null && !pushSecret.equals("")) {
+//			initUpush(context);
+//		}
 	}
 	
 	private static void initUpush(Context context) {

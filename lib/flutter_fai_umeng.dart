@@ -14,6 +14,7 @@ class FlutterFaiUmeng {
   static const messageChannel = const BasicMessageChannel(
       'flutter_and_native_um_100', StandardMessageCodec());
 
+
   //发送消息
   static Future<Map> sendMessage(Map arguments) async {
     //解析 原生发给 Flutter 的参数
@@ -87,7 +88,7 @@ class FlutterFaiUmeng {
   static const _channel = const MethodChannel('flutter_and_native_um_101');
   final String flutter_log = "| UMPUSH | Flutter | ";
 
-  Future<Map<dynamic, dynamic>> init(
+  static Future<Map> initPush(
     String umAppkey,
     String umSecret, {
     String miAppId,
@@ -98,7 +99,7 @@ class FlutterFaiUmeng {
     String opAppSecret,
     bool debug = true,
   }) async {
-    print(flutter_log + "init:");
+    print("init Push:");
     Map<dynamic, dynamic> params = Map();
     params["umAppkey"] = umAppkey;
     params["umSecret"] = umSecret;
@@ -109,18 +110,9 @@ class FlutterFaiUmeng {
     params["opAppKey"] = opAppKey;
     params["opAppSecret"] = opAppSecret;
     params["debug"] = debug;
-    final Map<dynamic, dynamic> result =
-        await _channel.invokeMethod('setTags', params);
-    return result;
+    return await messageChannel.send(params);
   }
 
 
 
-
-  Future<Map<dynamic, dynamic>> setTags(List<String> tags) async {
-    print(flutter_log + "setTags:");
-    final Map<dynamic, dynamic> result =
-        await _channel.invokeMethod('setTags', tags);
-    return result;
-  }
 }
