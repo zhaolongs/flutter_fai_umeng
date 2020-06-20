@@ -240,6 +240,7 @@ public class MessageChannelItem extends FlutterApplication {
         Map<String, String> lMap = new HashMap<>();
         lMap.put("chnnel", lChannelName);
         reply.reply(lMap);
+        init(context,arguments,reply);
     }
 
 
