@@ -1,8 +1,8 @@
 name: flutter_fai_umeng
 description: 友盟统计 flutter 插件 
 version: 0.0.2
-author:
-homepage:
+homepage: https://github.com/zhaolongs/flutter_fai_umeng.git
+
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -25,8 +25,12 @@ flutter:
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: com.studyyoun.flutter_fai_umeng
-    pluginClass: FlutterFaiUmengPlugin
+    platforms:
+      android:
+        package: com.studyyoun.flutter_fai_umeng
+        pluginClass: FlutterFaiUmengPlugin
+      ios:
+        pluginClass: FlutterFaiUmengPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
