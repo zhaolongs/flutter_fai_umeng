@@ -56,7 +56,16 @@ class FlutterFaiUmeng {
     map['method'] = "setAlias";
     map['alias'] = alias;
     map['type'] = type;
-    return sendMessage(map);
+    var resultMap = await sendMessage(map);
+    if (resultMap['result'].runtimeType is bool) {
+      bool result = resultMap['result'];
+      if (result) {
+        print("别名设置成功！alias = $alias");
+      } else {
+        print("别名设置失败！alias = $alias");
+      }
+    }
+    return resultMap;
   }
 
   /// 用户退出登录后清除别名防止错误推送
