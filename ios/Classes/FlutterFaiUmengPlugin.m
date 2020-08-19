@@ -43,7 +43,7 @@
             //日志
             [UMConfigure setLogEnabled:logEnabled];
             if (logEnabled) {
-            //开发者需要显式的调用此函数，日志系统才能工作
+                //开发者需要显式的调用此函数，日志系统才能工作
                 [UMCommonLogManager setUpUMCommonLogManager];
             }
             //渠道设置以及友盟的初始化
@@ -79,18 +79,18 @@
             if (@available(iOS 10.0, *)) {
                 [UNUserNotificationCenter currentNotificationCenter].delegate = [FlutterFaiUmengPlugin shareInstance];
             } else {
-            // Fallback on earlier versions
+                // Fallback on earlier versions
             }
             [UMessage registerForRemoteNotificationsWithLaunchOptions:[FlutterFaiUmengPlugin shareInstance].launchOptions Entity:entity completionHandler:^(BOOL granted, NSError *_Nullable error) {
                 if (granted) {
-            /// 用户允许推送
+                    /// 用户允许推送
                     if (callback) {
                         callback(@{ @"result": [NSNumber numberWithBool:granted] });
                     }
-            /// 轮询注册deviceToken
+                    /// 轮询注册deviceToken
                     [[FlutterFaiUmengPlugin shareInstance] checkDeviceToken];
                 } else {
-            /// 用户拒绝消息推送
+                    /// 用户拒绝消息推送
                     if (callback) {
                         callback(@{ @"result": [NSNumber numberWithBool:granted] });
                     }
@@ -101,6 +101,20 @@
             NSString *type = message[@"type"];
 
             [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+                if (!error) {
+                    if (callback) {
+                        callback(@{ @"result": [NSNumber numberWithBool:YES] });
+                    }
+                } else {
+                    if (callback) {
+                        callback(@{ @"result": [NSNumber numberWithBool:NO] });
+                    }
+                }
+            }];
+        } else if ([method isEqualToString:@"removeAlias"]) {
+            NSString *alias = message[@"alias"];
+            NSString *type = message[@"type"];
+            [UMessage removeAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
                 if (!error) {
                     if (callback) {
                         callback(@{ @"result": [NSNumber numberWithBool:YES] });
@@ -139,7 +153,6 @@
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else {
         result(FlutterMethodNotImplemented);
-
     }
 }
 

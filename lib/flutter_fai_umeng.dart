@@ -3,11 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-
 ///友盟统计
 class FlutterFaiUmeng {
-
-
   String recive = "";
 
   //创建 BasicMessageChannel
@@ -51,8 +48,10 @@ class FlutterFaiUmeng {
   /// 用户登录成功后注册别名
   /// [alias] 别名，一般使用登录手机号码
   /// [type] 别名分组，目前知轮商家使用TEST
-  static Future<Map> setAlias(
-      {@required String alias, String type = "TEST"}) async {
+  static Future<Map> setAlias({
+    @required String alias,
+    String type = "TEST",
+  }) async {
     Map map = new Map();
     map['method'] = "setAlias";
     map['alias'] = alias;
@@ -60,49 +59,67 @@ class FlutterFaiUmeng {
     return sendMessage(map);
   }
 
+  /// 用户退出登录后清除别名防止错误推送
+  /// [alias] 别名，一般使用登录手机号码
+  /// [type] 别名分组，目前知轮商家使用TEST
+  static Future<Map> removeAlias({
+    @required String alias,
+    String type = "TEST",
+  }) async {
+    Map map = Map();
+    map['method'] = "removeAlias";
+    map['alias'] = alias;
+    map['type'] = type;
+    return sendMessage(map);
+  }
+
   ///友盟页面进入统计
-  static Future<Map> uMengPageStart(String pageTitle)  async{
+  static Future<Map> uMengPageStart(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageStart";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageStart";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
-  static Future<Map> uMengPageResum(String pageTitle)  async{
+
+  static Future<Map> uMengPageResum(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageResum";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageResum";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
-  static Future<Map> uMengPagePause(String pageTitle)  async{
+
+  static Future<Map> uMengPagePause(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPagePause";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPagePause";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
 
   ///友盟页面退出统计
-  static Future<Map> uMengPageEnd(String pageTitle)  async{
+  static Future<Map> uMengPageEnd(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageEnd";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageEnd";
+    map["pageTitle"] = pageTitle;
 
     return sendMessage(map);
   }
+
   ///友盟点击事件统计
-  static Future<Map> uMengEventClick(String eventTitle,{String eventId})  async{
+  static Future<Map> uMengEventClick(String eventTitle,
+      {String eventId}) async {
     Map map = new Map();
-    map["method"]="eventClick";
-    map["eventTitle"] =eventTitle;
-    if(eventId!=null){}
+    map["method"] = "eventClick";
+    map["eventTitle"] = eventTitle;
+    if (eventId != null) {}
     map['eventId'] = eventId;
     return sendMessage(map);
   }
 
   ///友盟错误信息统计
-  static Future<Map> uMengError(String errorMessage)  async{
+  static Future<Map> uMengError(String errorMessage) async {
     Map map = new Map();
-    map["method"]="umError";
-    map["errorMessage"] =errorMessage;
+    map["method"] = "umError";
+    map["errorMessage"] = errorMessage;
     return sendMessage(map);
   }
 
@@ -133,7 +150,4 @@ class FlutterFaiUmeng {
     params["debug"] = debug;
     return await messageChannel.send(params);
   }
-
-
-
 }
