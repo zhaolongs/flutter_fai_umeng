@@ -13,6 +13,8 @@
 @property (nonatomic, strong) NSDictionary *launchOptions;
 @property (nonatomic, strong) NSData *deviceToken;
 @property (nonatomic, strong) FlutterBasicMessageChannel *messageChannel;
+/// 是否成功注册deviceToken（此后才可以设置别名）
+@property (nonatomic, assign) BOOL hasRegisterDeviceToken;
 
 @end
 
@@ -100,31 +102,51 @@
             NSString *alias = message[@"alias"];
             NSString *type = message[@"type"];
 
-            [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
-                if (!error) {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:YES] });
-                    }
-                } else {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:NO] });
-                    }
-                }
-            }];
+            if ([FlutterFaiUmengPlugin shareInstance].hasRegisterDeviceToken) {
+                [[FlutterFaiUmengPlugin shareInstance] setAlias:alias type:type callback:callback];
+            } else {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                   [[FlutterFaiUmengPlugin shareInstance] setAlias:alias type:type callback:callback];
+                               });
+            }
         } else if ([method isEqualToString:@"removeAlias"]) {
             NSString *alias = message[@"alias"];
             NSString *type = message[@"type"];
-            [UMessage removeAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
-                if (!error) {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:YES] });
-                    }
-                } else {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:NO] });
-                    }
-                }
-            }];
+            if ([FlutterFaiUmengPlugin shareInstance].hasRegisterDeviceToken) {
+                [[FlutterFaiUmengPlugin shareInstance] removeAlias:alias type:type callback:callback];
+            } else {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                   [[FlutterFaiUmengPlugin shareInstance] removeAlias:alias type:type callback:callback];
+                               });
+            }
+        }
+    }];
+}
+
+- (void)setAlias:(NSString *_Nullable)alias type:(NSString *_Nullable)type callback:(FlutterReply)callback {
+    [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+        if (!error) {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:YES] });
+            }
+        } else {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:NO] });
+            }
+        }
+    }];
+}
+
+- (void)removeAlias:(NSString *_Nullable)alias type:(NSString *_Nullable)type callback:(FlutterReply)callback {
+    [UMessage removeAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+        if (!error) {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:YES] });
+            }
+        } else {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:NO] });
+            }
         }
     }];
 }
@@ -132,6 +154,7 @@
 - (void)checkDeviceToken {
     if (self.deviceToken) {
         [UMessage registerDeviceToken:self.deviceToken];
+        self.hasRegisterDeviceToken = YES;
         NSLog(@"umeng注册deviceToken成功！");
         if (self.messageChannel) {
             const unsigned *tokenBytes = (const unsigned *)[self.deviceToken bytes];

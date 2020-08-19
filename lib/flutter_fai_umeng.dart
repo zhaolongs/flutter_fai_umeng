@@ -22,7 +22,10 @@ class FlutterFaiUmeng {
 
   /// 接收消息（原生用户点击通知打开app会触发此方法）
   static void receiveMessage(Function callBack) {
-    messageChannel.setMessageHandler((message) => callBack(message));
+    messageChannel.setMessageHandler((message) {
+      ///
+      return callBack(message);
+    });
   }
 
   /// [appKey] 创建应用的唯一标识
