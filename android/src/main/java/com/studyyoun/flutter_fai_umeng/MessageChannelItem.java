@@ -49,7 +49,7 @@ import static android.os.Looper.getMainLooper;
  * 页面说明：
  * 功能性修改记录：
  */
-public class MessageChannelItem extends FlutterApplication {
+public class MessageChannelItem {
     private String LOGTAG = MessageChannelItem.class.getSimpleName();
     private BasicMessageChannel<Object> mMessageChannel;
     public static MessageChannelItem sMMessageChannelItem = new MessageChannelItem();
@@ -65,14 +65,19 @@ public class MessageChannelItem extends FlutterApplication {
     private static String TAG = "| UMPUSH | Flutter | Android | ";
     public PushAgent mPushAgent;
     private static BasicMessageChannel.Reply<Object> mReply;
+    
+    public static Activity mActivity ;
 
     /**
      * 设置消息监听
-     *
-     * @param messenger
+     *  @param messenger
      * @param context
+     * @param activity
      */
-    public void messageChannelFunction(final BinaryMessenger messenger, final Context context) {
+    public void messageChannelFunction(final BinaryMessenger messenger, final Context context, Activity activity) {
+    
+        mActivity = activity;
+        
         //消息接收监听
         //BasicMessageChannel （主要是传递字符串和一些半结构体的数据）
         //创建通
@@ -234,13 +239,18 @@ public class MessageChannelItem extends FlutterApplication {
         boolean logEnabled = (boolean) arguments.get("logEnabled");
         Log.d(LOGTAG, "umeng 初始化消息【 " + "appkey:" + appkey + " pushSecret:" + pushSecret + " logEnabled:" + logEnabled + "】");
         //初始化
-        UmengUtils.uMengInit(context, appkey, pushSecret, logEnabled);
+//        UmengUtils.uMengInit(context, appkey, pushSecret, logEnabled);
         //获取当前的渠道
-        String lChannelName = UmengUtils.getChannelName(context);
-        Map<String, String> lMap = new HashMap<>();
-        lMap.put("chnnel", lChannelName);
-        reply.reply(lMap);
-        init(context,arguments,reply);
+//        String lChannelName = UmengUtils.getChannelName(context);
+//        Map<String, String> lMap = new HashMap<>();
+//        lMap.put("chnnel", lChannelName);
+//        reply.reply(lMap);
+//        init(context,arguments,reply);
+    
+        boolean lNotifyEnabled = NotificationUtil.isNotifyEnabled(context);
+        Log.d(LOGTAG, "umeng 初始化消息【 " + "lNotifyEnabled:" + lNotifyEnabled + "】");
+        
+        
     }
 
 
@@ -255,56 +265,9 @@ public class MessageChannelItem extends FlutterApplication {
      */
     public void init(Context context, Map<Object, Object> map, final BasicMessageChannel.Reply<Object> reply) {
         android.util.Log.d(TAG, "initPush :");
-        String umAppkey = (String) map.get("umAppkey");
-        String umSecret = (String) map.get("umSecret");
-        String miAppId = (String) map.get("miAppId");
-        String miAppKey = (String) map.get("miAppKey");
-        String mzAppId = (String) map.get("mzAppId");
-        String mzAppKey = (String) map.get("mzAppKey");
-        String opAppKey = (String) map.get("opAppKey");
-        String opAppSecret = (String) map.get("opAppSecret");
-
-        // 前面已初始化
-//        UMConfigure.init(this, umAppkey, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, umSecret);
-
-        //获取消息推送代理示例
-        mPushAgent = PushAgent.getInstance(this);
-        //注册推送服务，每次调用register方法都会回调该接口
-        mPushAgent.register(new IUmengRegisterCallback() {
-
-            @Override
-            public void onSuccess(String deviceToken) {
-                //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
-                android.util.Log.i(TAG, "注册成功：deviceToken：-------->  " + deviceToken);
-                reply.reply(new HashMap<String, Object>().put("注册成功", deviceToken));
-            }
-
-            @Override
-            public void onFailure(String s, String s1) {
-                android.util.Log.e(TAG, "注册失败：-------->  " + "s:" + s + ",s1:" + s1);
-//				reply.error("注册失败", s, s1);
-                reply.reply(new HashMap<String, Object>().put("注册失败", s + s1));
-            }
-        });
-
-        mPushAgent.setMessageHandler(messageHandler);
-
-        mPushAgent.setNotificationClickHandler(notificationClickHandler);
 
 
-        /**
-         * 初始化厂商通道
-         */
-        //小米通道
-        MiPushRegistar.register(this, miAppId, miAppKey);
-        //华为通道，注意华为通道的初始化参数在minifest中配置
-        HuaWeiRegister.register(this);
-        //魅族通道
-        MeizuRegister.register(this, mzAppId, mzAppKey);
-        //OPPO通道
-        OppoRegister.register(this, opAppKey, opAppSecret);
-        //VIVO 通道，注意VIVO通道的初始化参数在minifest中配置
-        VivoRegister.register(this);
+
 
     }
 

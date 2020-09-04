@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fai_umeng/flutter_fai_umeng.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  print("消息测试 main");
+//  WidgetsFlutterBinding.ensureInitialized();
+  ///友盟的初始化
+  ///参数一 appkey
+  ///参数二 推送使用的pushSecret
+  ///参数三 是否打开调试日志
+
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -15,13 +25,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    ///友盟的初始化
-    ///参数一 appkey
-    ///参数二 推送使用的pushSecret
-    ///参数三 是否打开调试日志
-    FlutterFaiUmeng.uMengInit("5dcfb8f84ca357f70e000b0a",
-        pushSecret: "5cb4fc014c143a77fb85cb17edd807a2", logEnabled: true);
-
+   initUmen();
     /// 监听原生消息
     FlutterFaiUmeng.receiveMessage((message) {
       print(message);
@@ -82,7 +86,8 @@ class _MyAppState extends State<MyApp> {
             ),
             FlatButton(
               onPressed: () async {
-                var result = await FlutterFaiUmeng.setAlias(alias: '17700000000');
+                var result =
+                    await FlutterFaiUmeng.setAlias(alias: '17700000000');
                 setState(() {
                   _result = result['result'].toString();
                 });
@@ -96,5 +101,10 @@ class _MyAppState extends State<MyApp> {
         )),
       ),
     );
+  }
+
+  void initUmen()  {
+    FlutterFaiUmeng.uMengInit("5dcfb8f84ca357f70e000b0a",
+        pushSecret: "5cb4fc014c143a77fb85cb17edd807a2", logEnabled: true);
   }
 }
