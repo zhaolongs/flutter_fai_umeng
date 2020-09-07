@@ -1,5 +1,6 @@
 package com.studyyoun.flutter_fai_umeng;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -69,9 +70,10 @@ public class FlutterFaiUmengPlugin {
         /**
          * 注册消息监听通道
          */
-        MessageChannelItem.getInstance().messageChannelFunction(registrar.messenger(), lContext);
+        MessageChannelItem.getInstance().messageChannelFunction(registrar.messenger(), lContext, registrar.activity());
+    
 
-
+    
         registrar.addViewDestroyListener(new PluginRegistry.ViewDestroyListener() {
             @Override
             public boolean onViewDestroy(FlutterNativeView view) {
