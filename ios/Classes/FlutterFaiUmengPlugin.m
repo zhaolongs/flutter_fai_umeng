@@ -242,9 +242,12 @@
         //应用处于前台时的远程推送接受
         //必须加这句代码
         [UMessage didReceiveRemoteNotification:userInfo];
+        /// MARK: 暂时去除前台收到通知响应事件
+        /*
         if (self.messageChannel) {
             [self.messageChannel sendMessage:@{ @"method": @"notification", @"userInfo": userInfo ? : @{} }];
         }
+        */
     } else {
         //应用处于前台时的本地推送接受
     }
