@@ -10,7 +10,7 @@ PODS:
     - UMCCommon
   - UMCCommon (2.1.1)
   - UMCCommonLog (1.0.0)
-  - UMCPush (3.2.5):
+  - UMCPush (3.2.4):
     - UMCCommon
 
 DEPENDENCIES:
@@ -19,11 +19,10 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
-    - UMCPush
-  trunk:
     - UMCAnalytics
     - UMCCommon
     - UMCCommonLog
+    - UMCPush
 
 EXTERNAL SOURCES:
   Flutter:
@@ -33,11 +32,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_fai_umeng: 9f604fb85dde9be81059cff5d6806b04f2566e24
+  flutter_fai_umeng: 8e4d5dcb262bc5497ed9cd37ef5ed478e357dc44
   UMCAnalytics: 045be2cd1ec05aa95ad62405a850757f932e2d59
   UMCCommon: 971f324a5a99c9d662ae040a815e7e3d7ef8b2a8
   UMCCommonLog: 05a2d5de21858e3d870551562cff405c1366d244
-  UMCPush: 078b5818e0e47c4cf8ab42a5a30e8b54a0854077
+  UMCPush: 1edd856027dcf905333effb4040ace5d236a7316
 
 PODFILE CHECKSUM: d9c4eea3a9ec77cc1fd4900b3e9b968e82689283
 
