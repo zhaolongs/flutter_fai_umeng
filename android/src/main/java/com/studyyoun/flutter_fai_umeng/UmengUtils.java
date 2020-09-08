@@ -53,7 +53,10 @@ public class UmengUtils {
 		int deviceType = config.deviceType;
 		String pushSecret = config.pushSecret;
 		if (channel == null || channel.equals("")) {
-			channel = "umen";
+			channel =getChannelName(context);
+			if (channel == null || channel.equals("")) {
+				channel = "umen";
+			}
 		}
 		if (appkey == null || appkey.equals("")) {
 			throw new NullPointerException("appkey is null");
@@ -89,11 +92,13 @@ public class UmengUtils {
 			public void onSuccess(String deviceToken) {
 				//注册成功会返回deviceToken deviceToken是推送消息的唯一标志
 				Log.i(LOGTAG, "注册成功：deviceToken：-------->  " + deviceToken);
+				MessageChannelItem.getInstance().sendRegisterNotification(1,deviceToken);
 			}
 			
 			@Override
 			public void onFailure(String s, String s1) {
 				Log.e(LOGTAG, "注册失败：-------->  " + "s:" + s + ",s1:" + s1);
+				MessageChannelItem.getInstance().sendRegisterNotification(2, "s:" + s + ",s1:" + s1);
 			}
 		});
 		

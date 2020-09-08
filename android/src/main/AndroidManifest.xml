@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.studyyoun.flutter_fai_umeng">
 
     <!-- 以下为需要的基本权限，需要自行添加至您的AndroidManifest文件中 start-->
@@ -22,10 +23,12 @@
             android:name="com.studyyoun.flutter_fai_umeng.FaiUMengPushIntentService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-           />
-        
-        <service android:name=".PushIntentService"  android:process=":push"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".PushIntentService"
+            android:process=":push" />
+
         <activity
             android:name="com.studyyoun.flutter_fai_umeng.MipushTestActivity"
             android:exported="true" />

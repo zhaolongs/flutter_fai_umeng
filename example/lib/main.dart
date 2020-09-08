@@ -27,8 +27,8 @@ class _MyAppState extends State<MyApp> {
 
    initUmen();
     /// 监听原生消息
-    FlutterFaiUmeng.receiveMessage((message) {
-      print(message);
+    FlutterFaiUmeng.receiveMessage((Map<dynamic ,dynamic>message) {
+      print("监听原生消息 "+ message.toString());
       setState(() {
         _result = message.toString();
       });

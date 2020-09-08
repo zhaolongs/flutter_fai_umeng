@@ -59,6 +59,8 @@ public class FaiUMengPushIntentService extends UmengMessageService {
                 UTrack.getInstance(getApplicationContext()).trackMsgDismissed(msg);
             }
     
+            MessageChannelItem.getInstance().sendNotification(msg);
+    
     
             showNotification(context,msg,intent);
             // 使用完全自定义消息来开启应用服务进程的示例代码
@@ -117,7 +119,6 @@ public class FaiUMengPushIntentService extends UmengMessageService {
 //        mNotificationManager.notify(103, mNotification);
     
         String id = "my_channel_01";
-        String name="我是渠道名字";
         
         String title = msg.title;
         
@@ -129,7 +130,7 @@ public class FaiUMengPushIntentService extends UmengMessageService {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel mChannel = new NotificationChannel(id, title, NotificationManager.IMPORTANCE_LOW);
             Log.i(TAG, mChannel.toString());
             notificationManager.createNotificationChannel(mChannel);
             notification = new Notification.Builder(this)
