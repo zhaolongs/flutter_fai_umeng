@@ -2,7 +2,7 @@
 #import <Flutter/Flutter.h>
 #import <UMCommon/UMCommon.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
-#import <UMAnalytics/MobClick.h>
+#import <UMCommon/MobClick.h>
 #import "UMengRecordTool.h"
 #import <UMPush/UMessage.h>
 
