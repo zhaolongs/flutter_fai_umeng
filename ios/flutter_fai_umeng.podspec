@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.dependency 'UMCCommon', '7.2.2'
   #s.dependency 'UMCAnalytics', '6.0.5'
   s.dependency 'UMCCommonLog', '1.0.0'
-  s.dependency 'UMCPush'
+  s.dependency 'UMCPush', '3.3.0'
   #s.dependency 'UMCSecurityPlugins'
   #s.dependency 'UMCErrorCatch'
 
