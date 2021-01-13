@@ -84,7 +84,7 @@ android {
 
         //PushSDK
         api 'com.umeng.umsdk:push:6.0.1'
-
+        api 'com.google.code.gson:gson:2.8.6'
 
     }
 }

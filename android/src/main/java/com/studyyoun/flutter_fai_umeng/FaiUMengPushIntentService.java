@@ -34,9 +34,8 @@ import io.flutter.embedding.android.FlutterView;
  * @author lucas
  */
 //完全自定义处理类
-public class FaiUMengPushIntentService extends UmengMessageService {
+public class FaiUMengPushIntentService {}/*extends UmengMessageService {
     private static final String TAG = FaiUMengPushIntentService.class.getName();
-
     @Override
     public void onMessage(Context context, Intent intent) {
         try {
@@ -59,7 +58,7 @@ public class FaiUMengPushIntentService extends UmengMessageService {
                 UTrack.getInstance(getApplicationContext()).trackMsgDismissed(msg);
             }
     
-            MessageChannelItem.getInstance().sendNotification(msg);
+//            MessageChannelItem.getInstance().sendNotification(msg);
     
     
             showNotification(context,msg,intent);
@@ -180,4 +179,4 @@ public class FaiUMengPushIntentService extends UmengMessageService {
        
        
     }
-}
+}*/

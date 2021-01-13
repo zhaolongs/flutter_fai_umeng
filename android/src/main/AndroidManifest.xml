@@ -19,11 +19,11 @@
 
     <application>
 
-        <service
+<!--        <service
             android:name="com.studyyoun.flutter_fai_umeng.FaiUMengPushIntentService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+            android:permission="android.permission.BIND_JOB_SERVICE" />-->
 
         <service
             android:name=".PushIntentService"
@@ -209,9 +209,9 @@
         <!-- VIVO厂商通道 end-->
 
         <!-- HUAWEI厂商通道 start-->
-        <meta-data
+      <!--  <meta-data
             android:name="com.huawei.hms.client.appid"
-            android:value="appid=此处改为VIVO后台真实参数" />
+            android:value="appid=此处改为VIVO后台真实参数" />-->
         <!-- HUAWEI厂商通道 end-->
 
     </application>

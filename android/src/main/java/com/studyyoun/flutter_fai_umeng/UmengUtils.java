@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class UmengUtils {
 	private static String LOGTAG = UmengUtils.class.getSimpleName();
-	
+	protected static  PushAgent mPushAgent;
 	/**
 	 * @param context
 	 * @param config
@@ -80,9 +80,9 @@ public class UmengUtils {
 	private static void initUpush(Application context, FaiUmenConfig config) {
 		
 		//获取消息推送代理示例
-		PushAgent mPushAgent = PushAgent.getInstance(context);
+		 mPushAgent = PushAgent.getInstance(context);
 		
-		mPushAgent.setPushIntentServiceClass(FaiUMengPushIntentService.class);
+//		mPushAgent.setPushIntentServiceClass(FaiUMengPushIntentService.class);
 		
 		
 		//注册推送服务，每次调用register方法都会回调该接口
@@ -101,7 +101,7 @@ public class UmengUtils {
 				MessageChannelItem.getInstance().sendRegisterNotification(2, "s:" + s + ",s1:" + s1);
 			}
 		});
-		
+
 		
 		/**
 		 * 初始化厂商通道
@@ -111,7 +111,7 @@ public class UmengUtils {
 			MiPushRegistar.register(context, config.xiomiId, config.xiaomiKey);
 		}
 		//华为通道，注意华为通道的初始化参数在minifest中配置
-		HuaWeiRegister.register(context);
+//		HuaWeiRegister.register(context);
 		
 		if (config.meizuAppId != null && !config.meizuAppId.equals("")) {
 			//魅族通道

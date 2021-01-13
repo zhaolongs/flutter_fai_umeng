@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.UiThread;
 
@@ -92,9 +93,10 @@ public class MessageChannelItem {
 			public void onMessage(final Object o, final BasicMessageChannel.Reply<Object> reply) {
 				mReply = reply;
 				controllMessageFunction(context, o, reply);
-				
+
 			}
 		});
+
 		
 	}
 	
@@ -111,9 +113,53 @@ public class MessageChannelItem {
 			Map<Object, Object> arguments = (Map<Object, Object>) o;
 			//方法名标识
 			String lMethod = (String) arguments.get("method");
+			Log.d(LOGTAG, "umeng 初始化消息  lMethod " + lMethod);
+//
 			switch (lMethod) {
 				case "umInit":
-					unInit(context, reply, arguments);
+					mPushAgent = UmengUtils.mPushAgent;
+					if (mPushAgent != null){
+						mPushAgent.setMessageHandler(new UmengMessageHandler(){
+							@Override
+							public Notification getNotification(Context context, UMessage uMessage) {
+								Log.d(LOGTAG, "umeng 收到信息2   msg_id  " + uMessage.msg_id);
+								return super.getNotification(context, uMessage);
+							}
+						});
+						mPushAgent.setNotificationClickHandler(new UmengNotificationClickHandler(){
+							@Override
+							public void dealWithCustomAction(Context context, UMessage uMessage) {
+								super.dealWithCustomAction(context, uMessage);
+								sendNotification(uMessage);
+								Log.d(LOGTAG, "umeng 收到信息5    " + uMessage.toString());
+								Log.d(LOGTAG, "umeng 收到信息5   extra  " + uMessage.extra.toString());
+							}
+
+							@Override
+							public void launchApp(Context context, UMessage uMessage) {
+								Log.d(LOGTAG, "umeng 收到信息4   custom  " +  uMessage.custom);
+								super.launchApp(context, uMessage);
+								sendNotification(uMessage);
+
+							}
+
+							@Override
+							public void openUrl(Context context, UMessage uMessage) {
+								super.openUrl(context, uMessage);
+								sendNotification(uMessage);
+							}
+
+							@Override
+							public void openActivity(Context context, UMessage uMessage) {
+								Log.d(LOGTAG, "umeng 收到信息6   msg_id  " + uMessage.msg_id);
+								super.openActivity(context, uMessage);
+								sendNotification(uMessage);
+							}
+						});
+					}
+					HashMap<String, Object> resultMap = new HashMap<>();
+					resultMap.put("method","umInit");
+					sendMessage(resultMap);
 					break;
 				case "umPageStart":
 					umPageStart(arguments);
@@ -128,7 +174,7 @@ public class MessageChannelItem {
 					umError(context, arguments);
 					break;
 				case "initPush":
-					init(context, arguments, reply);
+//					init(context, arguments, reply);
 					break;
 				case "addTags":
 					addTags(arguments, reply);
@@ -333,16 +379,20 @@ public class MessageChannelItem {
 	 * 别名绑定，将某一类型的别名ID绑定至某设备，老的绑定设备信息被覆盖，别名ID和deviceToken是一对一的映射关系
 	 */
 	public void setAlias(Map<Object, Object> map, final BasicMessageChannel.Reply<Object> reply) {
-		android.util.Log.d(TAG, "setAlias: " + map.get("setAlias"));
-		String alias = (String) map.get("setAlias");
-		mPushAgent.setAlias(alias, "自定义类型", new UTrack.ICallBack() {
-			@Override
-			public void onMessage(boolean isSuccess, String message) {
-				reply.reply(new HashMap<String, Object>().put("setAlias", isSuccess));
-				
-			}
-		});
-		
+		android.util.Log.d(TAG, "setAlias: " + map.get("alias"));
+		String alias = (String) map.get("alias");
+		String type = (String) map.get("type");
+		Log.d(LOGTAG, "umeng 初始化消息  alias " + alias);
+		if (mPushAgent!= null){
+			Log.d(LOGTAG, "umeng 初始化消息  type " + type);
+			mPushAgent.setAlias(alias, type, new UTrack.ICallBack() {
+				@Override
+				public void onMessage(boolean isSuccess, String message) {
+//					reply.reply(new HashMap<String, Object>().put("setAlias", isSuccess));
+				}
+			});
+
+		}
 	}
 	
 	/**
@@ -494,7 +544,6 @@ public class MessageChannelItem {
 		public void dealWithCustomAction(Context context, UMessage msg) {
 //                result.success(msg.getRaw());
 			android.util.Log.d(TAG + "handleMessage", msg.getRaw().toString());
-			mReply.reply(msg.getRaw());
 			
 		}
 		
@@ -825,11 +874,10 @@ public class MessageChannelItem {
 	
 	public void sendNotification(UMessage msg) {
 		//构建参数
-		Map<Object, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 		
 		resultMap.put("method", "notification");
-		resultMap.put("userInfo", msg);
-        
+		resultMap.put("userInfo",msg.extra);
         sendMessage(resultMap);
 	}
 	
@@ -844,7 +892,7 @@ public class MessageChannelItem {
 		
 		Log.e(LOGTAG, "注册消息 " + deviceToken);
 		//构建参数
-		Map<Object, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 		
 		resultMap.put("method", "deviceToken");
 		resultMap.put("deviceToken", deviceToken);
@@ -853,7 +901,7 @@ public class MessageChannelItem {
 		sendMessage(resultMap);
 	}
 	
-	public void sendMessage(final Map<Object, Object> resultMap) {
+	public void sendMessage(final Map<String, Object> resultMap) {
 		if (mMessageChannel != null) {
 			new Handler(getMainLooper()).post(new Runnable() {
 				@Override
@@ -861,8 +909,7 @@ public class MessageChannelItem {
 					mMessageChannel.send(resultMap, new BasicMessageChannel.Reply<Object>() {
 						@Override
 						public void reply(Object o) {
-							
-							Log.d("mMessageChannel", "mMessageChannel send 回调 " + o);
+							Log.e(LOGTAG, "MessageChannel send 回调 ");
 						}
 					});
 					
