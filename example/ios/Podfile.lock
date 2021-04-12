@@ -2,9 +2,9 @@ PODS:
   - Flutter (1.0.0)
   - flutter_fai_umeng (0.0.2):
     - Flutter
-    - UMCCommon (= 7.2.2)
-    - UMCCommonLog (= 1.0.0)
-    - UMCPush
+    - UMCCommon (~> 7.2.2)
+    - UMCCommonLog (~> 1.0.0)
+    - UMCPush (~> 3.3.1)
   - UMCCommon (7.2.2)
   - UMCCommonLog (1.0.0)
   - UMCPush (3.3.1):
@@ -28,11 +28,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_fai_umeng: 21b2dc8f372c83a42c83bda55f41189ecd1e9813
+  flutter_fai_umeng: c39e838643dda9860ebba8ce1b9008371041e2e7
   UMCCommon: 15e5311b00c7ff6e6ffb1f5c965651373b6b2b3c
   UMCCommonLog: 05a2d5de21858e3d870551562cff405c1366d244
   UMCPush: af977ec99bbf34558825e907c58f6b76f6c7f897
 
 PODFILE CHECKSUM: 5946ba511a6f27cdfa58e24961f3408e4f1c830d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

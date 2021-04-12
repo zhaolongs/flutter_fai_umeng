@@ -16,12 +16,13 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'UMCCommon'
-  #s.dependency 'UMCAnalytics', '6.0.5'
-  s.dependency 'UMCCommonLog'
-  s.dependency 'UMCPush'
-  #s.dependency 'UMCSecurityPlugins'
-  #s.dependency 'UMCErrorCatch'
+  s.dependency 'UMCCommon', '~> 7.2.2'
+  s.dependency 'UMCCommonLog', '~> 1.0.0'
+  s.dependency 'UMCPush', '~> 3.3.1'
+
+  #s.dependency 'UMCCommon', '~> 2.1.1'
+  #s.dependency 'UMCCommonLog', '~> 1.0.0'
+  #s.dependency 'UMCPush', '~> 3.2.4'
 
 
   s.ios.deployment_target = '8.0'
