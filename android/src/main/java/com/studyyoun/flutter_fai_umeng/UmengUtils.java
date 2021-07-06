@@ -1,30 +1,27 @@
 package com.studyyoun.flutter_fai_umeng;
 
-import android.app.Notification;
+import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
+import com.studyyoun.flutter_fai_umeng.app.FaiUmengApplication;
+import com.studyyoun.flutter_fai_umeng.config.FaiUmenConfig;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.commonsdk.statistics.common.DeviceConfig;
 import com.umeng.message.IUmengRegisterCallback;
-import com.umeng.message.MsgConstant;
 import com.umeng.message.PushAgent;
-import com.umeng.message.UTrack;
-import com.umeng.message.UmengMessageHandler;
-import com.umeng.message.UmengNotificationClickHandler;
-import com.umeng.message.entity.UMessage;
+
+import org.android.agoo.huawei.HuaWeiRegister;
+import org.android.agoo.mezu.MeizuRegister;
+import org.android.agoo.oppo.OppoRegister;
+import org.android.agoo.vivo.VivoRegister;
+import org.android.agoo.xiaomi.MiPushRegistar;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.os.Looper.getMainLooper;
 
 /**
  * 创建人： $(USER)
@@ -33,38 +30,13 @@ import static android.os.Looper.getMainLooper;
  * 功能性修改记录：
  */
 public class UmengUtils {
-	private static String LOGTAG=UmengUtils.class.getSimpleName();
-	private static UmengUtils sMUmengUtils = new UmengUtils();
-	private static PushAgent sMPushAgent;
-	
-	
-	public static UmengUtils getInstance() {
-		return sMUmengUtils;
-	}
-	
-	
-	public static void uMengInit(Context context, String appkey, String pushSecret, boolean logEnabled) {
-		///在本方法中使用了[getChannelName]方法来获取配置在 AndroidManifest.xml中的友盟的渠道名称
-		///如使用 360加固打包启动了多渠道打包配制，getChannelName 方法将会获取到这个渠道名称
-		uMengInit(context, appkey, getChannelName(context), UMConfigure.DEVICE_TYPE_PHONE, pushSecret, logEnabled);
-	}
-	
+	private static String LOGTAG = UmengUtils.class.getSimpleName();
+	protected static  PushAgent mPushAgent;
 	/**
-	 * @param channel    渠道的命名规范
-	 *                   1.可以由英文字母、阿拉伯数字、下划线、中划线、空格、括号组成，可以含汉字以及其他明文字符，但是不建议使用中文命名，会出现乱码。
-	 *                   2.首尾字符不可以为空格。
-	 *                   3.不要使用纯数字作为渠道ID。
-	 *                   4.最多256个字符。
-	 *                   5.”unknown” 及其各种大小写形式，作为【友盟+】保留的字段，不可以作为渠道名。
-	 *                   <p>
-	 *                   在您查看数据时，渠道会作为一个数据细分的维度。
 	 * @param context
-	 * @param appkey
-	 * @param channel
-	 * @param deviceType
-	 * @param pushSecret
+	 * @param config
 	 */
-	public static void uMengInit(Context context, String appkey, String channel, int deviceType, String pushSecret, boolean logEnabled) {
+	public static void uMengInit(final Application context, FaiUmenConfig config) {
 		
 		/**
 		 * 设置组件化的Log开关
@@ -74,73 +46,85 @@ public class UmengUtils {
 		 * Info(打印SDK提示信息)。
 		 * Debug(打印SDK调试信息)。
 		 */
-		UMConfigure.setLogEnabled(logEnabled);
-		//打开调试模式
-		MobclickAgent.setDebugMode( logEnabled );
-		//true打开 ，false为关闭
-		//禁止默认的页面统计方式  （一般不用设置，因为默认是进行统计的）
-		//MobclickAgent.openActivityDurationTrack(true);
-		//错误收集（默认已经配置，而且已经打开）
-		//MobclickAgent.setCatchUncaughtExceptions(true);
+		UMConfigure.setLogEnabled(config.logEnabled);
 		
+		String channel = config.channel;
+		String appkey = config.appkey;
+		int deviceType = config.deviceType;
+		String pushSecret = config.pushSecret;
 		if (channel == null || channel.equals("")) {
-			channel = "test";
+			channel =getChannelName(context);
+			if (channel == null || channel.equals("")) {
+				channel = "umen";
+			}
 		}
 		if (appkey == null || appkey.equals("")) {
 			throw new NullPointerException("appkey is null");
 		}
 		
-		/**
-		 * 注意: 即使您已经在AndroidManifest.xml中配置过appkey和channel值，也需要在App代码中调
-		 * 用初始化接口（如需要使用AndroidManifest.xml中配置好的appkey和channel值，
-		 * UMConfigure.init调用中appkey和channel参数请置为null）。
-		 */
+		
+		// 在此处调用基础组件包提供的初始化函数 相应信息可在应用管理 -> 应用信息 中找到 http://message.umeng.com/list/apps
+		// 参数一：当前上下文context；
+		// 参数二：应用申请的Appkey（需替换）；
+		// 参数三：渠道名称；
+		// 参数四：设备类型，必须参数，传参数为UMConfigure.DEVICE_TYPE_PHONE则表示手机；传参数为UMConfigure.DEVICE_TYPE_BOX则表示盒子；默认为手机；
+		// 参数五：Push推送业务的secret 填充Umeng Message Secret对应信息（需替换）
 		UMConfigure.init(context, appkey, channel, deviceType, pushSecret);
-		// 选用LEGACY_AUTO页面采集模式
-		MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
-		// 支持在子进程中统计自定义事件
-		UMConfigure.setProcessEvent(true);
-//
-//		if (pushSecret != null && !pushSecret.equals("")) {
-//			initUpush(context);
-//		}
+		
+		
+		if (pushSecret != null && !pushSecret.equals("")) {
+			initUpush(context, config);
+		}
 	}
 	
-	private static void initUpush(Context context) {
+	private static void initUpush(Application context, FaiUmenConfig config) {
+		
 		//获取消息推送代理示例
-		sMPushAgent = PushAgent.getInstance(context);
+		 mPushAgent = PushAgent.getInstance(context);
+		
+//		mPushAgent.setPushIntentServiceClass(FaiUMengPushIntentService.class);
 		
 		
-		//sdk开启通知声音
-		sMPushAgent.setNotificationPlaySound(MsgConstant.NOTIFICATION_PLAY_SDK_ENABLE);
-		// sdk关闭通知声音
-//		mPushAgent.setNotificationPlaySound(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
-		// 通知声音由服务端控制
-//		mPushAgent.setNotificationPlaySound(MsgConstant.NOTIFICATION_PLAY_SERVER);
-//		mPushAgent.setNotificationPlayLights(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
-//		mPushAgent.setNotificationPlayVibrate(MsgConstant.NOTIFICATION_PLAY_SDK_DISABLE);
-		
-		sMPushAgent.setPushIntentServiceClass(MyPushIntentService.class);
-		registerPush();
-		
-	}
-	
-	/**
-	 * 注册友盟推送
-	 */
-	private static void registerPush() {
 		//注册推送服务，每次调用register方法都会回调该接口
-		sMPushAgent.register(new IUmengRegisterCallback() {
+		mPushAgent.register(new IUmengRegisterCallback() {
+			
 			@Override
 			public void onSuccess(String deviceToken) {
 				//注册成功会返回deviceToken deviceToken是推送消息的唯一标志
-				Log.i(LOGTAG,"注册成功：deviceToken：-------->  " + deviceToken);
+				Log.i(LOGTAG, "注册成功：deviceToken：-------->  " + deviceToken);
+				MessageChannelItem.getInstance().sendRegisterNotification(1,deviceToken);
 			}
+			
 			@Override
 			public void onFailure(String s, String s1) {
-				Log.e(LOGTAG,"注册失败：-------->  " + "s:" + s + ",s1:" + s1);
+				Log.e(LOGTAG, "注册失败：-------->  " + "s:" + s + ",s1:" + s1);
+				MessageChannelItem.getInstance().sendRegisterNotification(2, "s:" + s + ",s1:" + s1);
 			}
 		});
+
+		
+		/**
+		 * 初始化厂商通道
+		 */
+		if (config.xiomiId != null && !config.xiomiId.equals("")) {
+			//小米通道
+			MiPushRegistar.register(context, config.xiomiId, config.xiaomiKey);
+		}
+		//华为通道，注意华为通道的初始化参数在minifest中配置
+//		HuaWeiRegister.register(context);
+		
+		if (config.meizuAppId != null && !config.meizuAppId.equals("")) {
+			//魅族通道
+			MeizuRegister.register(context, config.meizuAppId, config.meizuAppKey);
+		}
+		if (config.oppoAppKey != null && !config.oppoAppKey.equals("")) {
+//        //OPPO通道
+			OppoRegister.register(context, config.oppoAppKey, config.oppoAppSecret);
+		}
+
+//        //VIVO 通道，注意VIVO通道的初始化参数在minifest中配置
+		VivoRegister.register(context);
+		
 	}
 	
 	
@@ -196,21 +180,23 @@ public class UmengUtils {
 	}
 	
 	public static void uMengEventObject(Context context, String eventName) {
-		uMengEventObject(context,eventName,null);
+		uMengEventObject(context, eventName, null);
 	}
+	
 	public static void uMengEventObject(Context context, String eventName, String eventId) {
 		Map<String, Object> music = new HashMap<String, Object>();
 		if (eventName == null || eventName.equals("")) {
 			eventName = "test_click";
 		}
-		if(eventId==null||"".equals(eventId)){
+		if (eventId == null || "".equals(eventId)) {
 			MobclickAgent.onEvent(context, eventName);
-		}else {
+		} else {
 			music.put("eventName", eventName);//自定义参数：音乐类型，值：流行
-			MobclickAgent.onEventObject(context, eventId, music);
+//			MobclickAgent.onEventObject(context, eventId, music);
 		}
-	
+		
 	}
+	
 	public static void uMengError(Context context, String errorMessage) {
 		Map<String, Object> music = new HashMap<String, Object>();
 		if (errorMessage == null || errorMessage.equals("")) {
@@ -220,15 +206,17 @@ public class UmengUtils {
 	}
 	
 	
-	public static String[] getTestDeviceInfo(Context context){
+	public static String[] getTestDeviceInfo(Context context) {
 		String[] deviceInfo = new String[2];
 		try {
-			if(context != null){
+			if (context != null) {
 				deviceInfo[0] = DeviceConfig.getDeviceIdForGeneral(context);
 				deviceInfo[1] = DeviceConfig.getMac(context);
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 		}
 		return deviceInfo;
 	}
+	
+	
 }

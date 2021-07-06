@@ -2,7 +2,7 @@
 #import <Flutter/Flutter.h>
 #import <UMCommon/UMCommon.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
-#import <UMAnalytics/MobClick.h>
+#import <UMCommon/MobClick.h>
 #import "UMengRecordTool.h"
 #import <UMPush/UMessage.h>
 
@@ -13,6 +13,8 @@
 @property (nonatomic, strong) NSDictionary *launchOptions;
 @property (nonatomic, strong) NSData *deviceToken;
 @property (nonatomic, strong) FlutterBasicMessageChannel *messageChannel;
+/// 是否成功注册deviceToken（此后才可以设置别名）
+@property (nonatomic, assign) BOOL hasRegisterDeviceToken;
 
 @end
 
@@ -43,7 +45,7 @@
             //日志
             [UMConfigure setLogEnabled:logEnabled];
             if (logEnabled) {
-            //开发者需要显式的调用此函数，日志系统才能工作
+                //开发者需要显式的调用此函数，日志系统才能工作
                 [UMCommonLogManager setUpUMCommonLogManager];
             }
             //渠道设置以及友盟的初始化
@@ -79,18 +81,18 @@
             if (@available(iOS 10.0, *)) {
                 [UNUserNotificationCenter currentNotificationCenter].delegate = [FlutterFaiUmengPlugin shareInstance];
             } else {
-            // Fallback on earlier versions
+                // Fallback on earlier versions
             }
             [UMessage registerForRemoteNotificationsWithLaunchOptions:[FlutterFaiUmengPlugin shareInstance].launchOptions Entity:entity completionHandler:^(BOOL granted, NSError *_Nullable error) {
                 if (granted) {
-            /// 用户允许推送
+                    /// 用户允许推送
                     if (callback) {
                         callback(@{ @"result": [NSNumber numberWithBool:granted] });
                     }
-            /// 轮询注册deviceToken
+                    /// 轮询注册deviceToken
                     [[FlutterFaiUmengPlugin shareInstance] checkDeviceToken];
                 } else {
-            /// 用户拒绝消息推送
+                    /// 用户拒绝消息推送
                     if (callback) {
                         callback(@{ @"result": [NSNumber numberWithBool:granted] });
                     }
@@ -100,17 +102,51 @@
             NSString *alias = message[@"alias"];
             NSString *type = message[@"type"];
 
-            [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
-                if (!error) {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:YES] });
-                    }
-                } else {
-                    if (callback) {
-                        callback(@{ @"result": [NSNumber numberWithBool:NO] });
-                    }
-                }
-            }];
+            if ([FlutterFaiUmengPlugin shareInstance].hasRegisterDeviceToken) {
+                [[FlutterFaiUmengPlugin shareInstance] setAlias:alias type:type callback:callback];
+            } else {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                   [[FlutterFaiUmengPlugin shareInstance] setAlias:alias type:type callback:callback];
+                               });
+            }
+        } else if ([method isEqualToString:@"removeAlias"]) {
+            NSString *alias = message[@"alias"];
+            NSString *type = message[@"type"];
+            if ([FlutterFaiUmengPlugin shareInstance].hasRegisterDeviceToken) {
+                [[FlutterFaiUmengPlugin shareInstance] removeAlias:alias type:type callback:callback];
+            } else {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                   [[FlutterFaiUmengPlugin shareInstance] removeAlias:alias type:type callback:callback];
+                               });
+            }
+        }
+    }];
+}
+
+- (void)setAlias:(NSString *_Nullable)alias type:(NSString *_Nullable)type callback:(FlutterReply)callback {
+    [UMessage setAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+        if (!error) {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:YES] });
+            }
+        } else {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:NO] });
+            }
+        }
+    }];
+}
+
+- (void)removeAlias:(NSString *_Nullable)alias type:(NSString *_Nullable)type callback:(FlutterReply)callback {
+    [UMessage removeAlias:alias ? : @"" type:type ? : @"TEST" response:^(id _Nullable responseObject, NSError *_Nullable error) {
+        if (!error) {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:YES] });
+            }
+        } else {
+            if (callback) {
+                callback(@{ @"result": [NSNumber numberWithBool:NO] });
+            }
         }
     }];
 }
@@ -118,6 +154,7 @@
 - (void)checkDeviceToken {
     if (self.deviceToken) {
         [UMessage registerDeviceToken:self.deviceToken];
+        self.hasRegisterDeviceToken = YES;
         NSLog(@"umeng注册deviceToken成功！");
         if (self.messageChannel) {
             const unsigned *tokenBytes = (const unsigned *)[self.deviceToken bytes];
@@ -139,7 +176,6 @@
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else {
         result(FlutterMethodNotImplemented);
-
     }
 }
 
@@ -206,9 +242,12 @@
         //应用处于前台时的远程推送接受
         //必须加这句代码
         [UMessage didReceiveRemoteNotification:userInfo];
+        /// MARK: 暂时去除前台收到通知响应事件
+        /*
         if (self.messageChannel) {
             [self.messageChannel sendMessage:@{ @"method": @"notification", @"userInfo": userInfo ? : @{} }];
         }
+        */
     } else {
         //应用处于前台时的本地推送接受
     }

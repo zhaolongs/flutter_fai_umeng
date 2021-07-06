@@ -1,14 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-
 
 ///友盟统计
 class FlutterFaiUmeng {
-
-
-  String recive = "";
+  String receiver = "";
 
   //创建 BasicMessageChannel
   // flutter_and_native_100 为通信标识
@@ -17,9 +13,10 @@ class FlutterFaiUmeng {
       'flutter_and_native_um_100', StandardMessageCodec());
 
   //发送消息
-  static Future<Map> sendMessage(Map arguments) async {
+  static Future<Map?> sendMessage(Map arguments) async {
     //解析 原生发给 Flutter 的参数
-    Map reply = await messageChannel.send(arguments);
+    Map? reply = await (messageChannel.send(arguments)
+        as FutureOr<Map<dynamic, dynamic>?>);
     return reply;
   }
 
@@ -31,8 +28,8 @@ class FlutterFaiUmeng {
   /// [appKey] 创建应用的唯一标识
   /// [pushSecret] 使用推送时必传的参数
   /// [logEnabled] 是否开启友盟推送的日志
-  static Future<Map> uMengInit(String appKey,
-      {String pushSecret, bool logEnabled = false}) async {
+  static Future<Map?> uMengInit(String appKey,
+      {String? pushSecret, bool logEnabled = false}) async {
     Map map = new Map();
     map["method"] = "umInit";
     map["appkey"] = appKey;
@@ -42,7 +39,7 @@ class FlutterFaiUmeng {
   }
 
   /// 注册友盟通知
-  static Future<Map> pushInit() async {
+  static Future<Map?> pushInit() async {
     Map map = new Map();
     map['method'] = "pushInit";
     return sendMessage(map);
@@ -51,73 +48,102 @@ class FlutterFaiUmeng {
   /// 用户登录成功后注册别名
   /// [alias] 别名，一般使用登录手机号码
   /// [type] 别名分组，目前知轮商家使用TEST
-  static Future<Map> setAlias(
-      {@required String alias, String type = "TEST"}) async {
+  static Future<Map> setAlias({
+    required String alias,
+    String type = "TEST",
+  }) async {
     Map map = new Map();
     map['method'] = "setAlias";
+    map['alias'] = alias;
+    map['type'] = type;
+    var resultMap = await (sendMessage(map) as FutureOr<Map<dynamic, dynamic>>);
+    if (resultMap['result'].runtimeType is bool) {
+      bool result = resultMap['result'];
+      if (result) {
+        print("别名设置成功！alias = $alias");
+      } else {
+        print("别名设置失败！alias = $alias");
+      }
+    }
+    return resultMap;
+  }
+
+  /// 用户退出登录后清除别名防止错误推送
+  /// [alias] 别名，一般使用登录手机号码
+  /// [type] 别名分组，目前知轮商家使用TEST
+  static Future<Map?> removeAlias({
+    required String alias,
+    String type = "TEST",
+  }) async {
+    Map map = Map();
+    map['method'] = "removeAlias";
     map['alias'] = alias;
     map['type'] = type;
     return sendMessage(map);
   }
 
   ///友盟页面进入统计
-  static Future<Map> uMengPageStart(String pageTitle)  async{
+  static Future<Map?> uMengPageStart(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageStart";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageStart";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
-  static Future<Map> uMengPageResum(String pageTitle)  async{
+
+  static Future<Map?> uMengPageResume(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageResum";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageResum";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
-  static Future<Map> uMengPagePause(String pageTitle)  async{
+
+  static Future<Map?> uMengPagePause(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPagePause";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPagePause";
+    map["pageTitle"] = pageTitle;
     return sendMessage(map);
   }
 
   ///友盟页面退出统计
-  static Future<Map> uMengPageEnd(String pageTitle)  async{
+  static Future<Map?> uMengPageEnd(String pageTitle) async {
     Map map = new Map();
-    map["method"]="umPageEnd";
-    map["pageTitle"] =pageTitle;
+    map["method"] = "umPageEnd";
+    map["pageTitle"] = pageTitle;
 
     return sendMessage(map);
   }
+
   ///友盟点击事件统计
-  static Future<Map> uMengEventClick(String eventTitle,{String eventId})  async{
+  static Future<Map?> uMengEventClick(String eventTitle,
+      {String? eventId}) async {
     Map map = new Map();
-    map["method"]="eventClick";
-    map["eventTitle"] =eventTitle;
-    if(eventId!=null){}
+    map["method"] = "eventClick";
+    map["eventTitle"] = eventTitle;
+    if (eventId != null) {}
     map['eventId'] = eventId;
     return sendMessage(map);
   }
 
   ///友盟错误信息统计
-  static Future<Map> uMengError(String errorMessage)  async{
+  static Future<Map?> uMengError(String errorMessage) async {
     Map map = new Map();
-    map["method"]="umError";
-    map["errorMessage"] =errorMessage;
+    map["method"] = "umError";
+    map["errorMessage"] = errorMessage;
     return sendMessage(map);
   }
 
-  static const _channel = const MethodChannel('flutter_and_native_um_101');
-  final String flutter_log = "| UMPUSH | Flutter | ";
+  // static const _channel = const MethodChannel('flutter_and_native_um_101');
+  final String flutterLog = "| UMPUSH | Flutter | ";
 
-  static Future<Map> initPush(
+  static Future<Map?> initPush(
     String umAppkey,
     String umSecret, {
-    String miAppId,
-    String miAppKey,
-    String mzAppId,
-    String mzAppKey,
-    String opAppKey,
-    String opAppSecret,
+    String? miAppId,
+    String? miAppKey,
+    String? mzAppId,
+    String? mzAppKey,
+    String? opAppKey,
+    String? opAppSecret,
     bool debug = true,
   }) async {
     print("init Push:");
@@ -131,9 +157,7 @@ class FlutterFaiUmeng {
     params["opAppKey"] = opAppKey;
     params["opAppSecret"] = opAppSecret;
     params["debug"] = debug;
-    return await messageChannel.send(params);
+    return await (messageChannel.send(params)
+        as FutureOr<Map<dynamic, dynamic>?>);
   }
-
-
-
 }

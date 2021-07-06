@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fai_umeng/flutter_fai_umeng.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  print("消息测试 main");
+//  WidgetsFlutterBinding.ensureInitialized();
+  ///友盟的初始化
+  ///参数一 appkey
+  ///参数二 推送使用的pushSecret
+  ///参数三 是否打开调试日志
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -15,16 +24,11 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    ///友盟的初始化
-    ///参数一 appkey
-    ///参数二 推送使用的pushSecret
-    ///参数三 是否打开调试日志
-    FlutterFaiUmeng.uMengInit("5dcfb8f84ca357f70e000b0a",
-        pushSecret: "5cb4fc014c143a77fb85cb17edd807a2", logEnabled: true);
+    initUmeng();
 
     /// 监听原生消息
-    FlutterFaiUmeng.receiveMessage((message) {
-      print(message);
+    FlutterFaiUmeng.receiveMessage((Map<dynamic, dynamic> message) {
+      print("监听原生消息 " + message.toString());
       setState(() {
         _result = message.toString();
       });
@@ -41,48 +45,50 @@ class _MyAppState extends State<MyApp> {
         body: Center(
             child: Column(
           children: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () {
                 FlutterFaiUmeng.uMengPageStart("测试页面1");
               },
               child: Text("统计页面进入"),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () {
                 FlutterFaiUmeng.uMengPageEnd("测试页面1");
               },
               child: Text("统计页面结束"),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () {
                 FlutterFaiUmeng.uMengEventClick("login");
               },
               child: Text("统计按钮点击事件"),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () {
-                var falg = 1 / 0;
+                var flag = 1 / 0;
+                print(flag);
               },
               child: Text("测试异常"),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () {
                 FlutterFaiUmeng.uMengError("有错误了");
               },
               child: Text("测试异常上报"),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () async {
                 var result = await FlutterFaiUmeng.pushInit();
                 setState(() {
-                  _result = result['result'].toString();
+                  _result = result?['result']?.toString() ?? "";
                 });
               },
               child: Text('注册通知'),
             ),
-            FlatButton(
+            TextButton(
               onPressed: () async {
-                var result = await FlutterFaiUmeng.setAlias(alias: '17700000000');
+                var result =
+                    await FlutterFaiUmeng.setAlias(alias: '17700000000');
                 setState(() {
                   _result = result['result'].toString();
                 });
@@ -96,5 +102,10 @@ class _MyAppState extends State<MyApp> {
         )),
       ),
     );
+  }
+
+  void initUmeng() {
+    FlutterFaiUmeng.uMengInit("5dcfb8f84ca357f70e000b0a",
+        pushSecret: "5cb4fc014c143a77fb85cb17edd807a2", logEnabled: true);
   }
 }

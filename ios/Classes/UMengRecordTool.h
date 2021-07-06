@@ -10,7 +10,7 @@
 
 #import <UMCommon/UMCommon.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
-#import <UMAnalytics/MobClick.h>
+#import <UMCommon/MobClick.h>
 @interface UMengRecordTool : NSObject
 
 
