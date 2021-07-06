@@ -1,31 +1,19 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 
 class FaiUmengWidget extends StatefulWidget {
-
   FaiUmengWidget();
 
   @override
   State<StatefulWidget> createState() {
-
-    return AndroidUmengtate();
+    return AndroidUmengState();
   }
-
-
 }
 
-class AndroidUmengtate extends State<FaiUmengWidget> {
-
+class AndroidUmengState extends State<FaiUmengWidget> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -36,8 +24,6 @@ class AndroidUmengtate extends State<FaiUmengWidget> {
 
   @override
   Widget build(BuildContext context) {
-
+    return Container();
   }
-
-
 }

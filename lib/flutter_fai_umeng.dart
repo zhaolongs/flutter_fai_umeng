@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 ///友盟统计
 class FlutterFaiUmeng {
-  String recive = "";
+  String receiver = "";
 
   //创建 BasicMessageChannel
   // flutter_and_native_100 为通信标识
@@ -16,7 +15,8 @@ class FlutterFaiUmeng {
   //发送消息
   static Future<Map?> sendMessage(Map arguments) async {
     //解析 原生发给 Flutter 的参数
-    Map? reply = await (messageChannel.send(arguments) as FutureOr<Map<dynamic, dynamic>?>);
+    Map? reply = await (messageChannel.send(arguments)
+        as FutureOr<Map<dynamic, dynamic>?>);
     return reply;
   }
 
@@ -90,7 +90,7 @@ class FlutterFaiUmeng {
     return sendMessage(map);
   }
 
-  static Future<Map?> uMengPageResum(String pageTitle) async {
+  static Future<Map?> uMengPageResume(String pageTitle) async {
     Map map = new Map();
     map["method"] = "umPageResum";
     map["pageTitle"] = pageTitle;
@@ -132,8 +132,8 @@ class FlutterFaiUmeng {
     return sendMessage(map);
   }
 
-  static const _channel = const MethodChannel('flutter_and_native_um_101');
-  final String flutter_log = "| UMPUSH | Flutter | ";
+  // static const _channel = const MethodChannel('flutter_and_native_um_101');
+  final String flutterLog = "| UMPUSH | Flutter | ";
 
   static Future<Map?> initPush(
     String umAppkey,
@@ -157,6 +157,7 @@ class FlutterFaiUmeng {
     params["opAppKey"] = opAppKey;
     params["opAppSecret"] = opAppSecret;
     params["debug"] = debug;
-    return await (messageChannel.send(params) as FutureOr<Map<dynamic, dynamic>?>);
+    return await (messageChannel.send(params)
+        as FutureOr<Map<dynamic, dynamic>?>);
   }
 }
